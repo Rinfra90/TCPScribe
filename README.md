@@ -1,6 +1,6 @@
 # TCP Scribe
 
-Qualhour si fosse interessati solamente alle procedure necessarie per l'installazione del servizio, iniziare da [PC](#pc) e continuare con la sezione [Procedura di installazione](#procedura-di-installazione)
+Qualora si fosse interessati solamente alle procedure necessarie per l'installazione del servizio, iniziare da [PC](#pc) e continuare con la sezione [Procedura di installazione](#procedura-di-installazione)
 
 ### Legenda
 
@@ -15,40 +15,42 @@ Qualhour si fosse interessati solamente alle procedure necessarie per l'installa
 - [Log](#log)
 
 ## Info
-TCP Scribe è un servizio di Windows pensato per girare silentemente in background. Il suo scopo è quello di ricevere dati tramite comunicazione TCP e di scriverli su un database. _TCP Scribe_ è pensato per utilizzare una Structure di dati standard, ottimizzati per l'analisi di una nave. I tipi di dati che _TCP Scribe_ interpreta sono Events, alarms, Settings e Values.
+TCP Scribe è un servizio di Windows pensato per girare silentemente in background. Il suo scopo è quello di ricevere dati tramite comunicazione TCP e di scriverli su un database. _TCP Scribe_ è pensato per utilizzare una struttura di dati standard, ottimizzati per l'analisi di una nave. I tipi di dati che _TCP Scribe_ interpreta sono Eventi, Allarmi, Settaggi e Valori.
 Nel caso il database non esista, il servizio provvederà autonomamente a crearne uno con il nome _Analizer_ ed a definirne tutte le proprietà necessarie per il corretto funzionamento.
-Consultare la sezione [Structure Database](#Structure-database) per ulteriori informazioni
+Consultare la sezione [Struttura Database](#struttura-database) per ulteriori informazioni
 
 Le credenziali di accesso al database sono immagazzinate in un file di configurazione insieme alle coordinate di accesso al server. Il file di configurazione ha il solo scopo di agevolare la modifica delle proprietà da parte del distributore. Consultare la sezione [File di configurazione](#file-di-configurazione) per maggiori informazioni.
 
 Tutte le informazioni relative ad errori o azioni di processo, vengono invece immagazzinate all'interno di diversi file Log. Anche l'utilizzo di questi file, ha lo scopo di aiutare la manutenzione e il supporto in caso di eventuali problematiche da parte del distributore. Consultare la sezione [Log](#log) per maggiori informazioni.
 
-## Structure Database
+*Copyright © 2022 - [Cienne Solutions](https://www.ciennesolutions.it/) -  È vietata la redistribuzione e la pubblicazione dei contenuti e immagini non autorizzata espressamente dall´autore.*
+
+## Struttura Database
 
 Il database è pensato per le esigenze di una nave ed è suddiviso in tre tabelle.
-- [Events ed alarms](#Events-ed-alarms)
-- [Settings](#Settings)
-- [Values](#Values)
+- [Eventi ed allarmi](#eventi-ed-allarmi)
+- [Settaggi](#settaggi)
+- [Valori](#valori)
 
-### Events ed alarms
+### Eventi ed allarmi
 
 Questa tabella raccoglie la maggior parte degli stati presenti sulla nave.
-| id | Data | EVENT | VALUE | TYPE |
+| id | Data | Evento | Valore | Tipo |
 | ------ | ------ | ------ | ------ | ------ |
-|    Numero univoco identificativo    |    Data di registrazione dell'EVENT da parte del controllore    | Nome dell'EVENT registrato | Variabile in base alla TYPElogia di EVENT | Sigla che identifica se EVENT o allarme |
+|    Numero univoco identificativo    |    Data di registrazione dell'evento da parte del controllore    | Nome dell'evento registrato | Variabile in base alla tipologia di evento | Sigla che identifica se Evento o allarme |
 |    Numero intero    |    Formato `yyyy-mm-dd hh:mm:ss`    |    Descrizione testuale    |    Descrizione testuale    |    EVN/ALM    |
 
-### Settings
+### Settaggi
 
-Questa tabella raccoglie le interazioni degli utenti e i cambiamenti di Settings
-  | id | Data | STATION | OPERATOR | EVENT | VALUE | TYPE |
+Questa tabella raccoglie le interazioni degli utenti e i cambiamenti di settaggi
+  | id | Data | Stazione | Operatore | Evento | Valore | Tipo |
 | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
-|    Numero univoco identificativo    | Data di registrazione dell'EVENT da parte del controllore | STATION dalla quale è stata eseguita l'operazione | Chi ha eseguito l'operazione nella STATION |     Nome dell'EVENT registrato | Variabile in base alla TYPElogia di EVENT | Sigla identificativa del Settingso |
+|    Numero univoco identificativo    | Data di registrazione dell'evento da parte del controllore | Stazione dalla quale è stata eseguita l'operazione | Chi ha eseguito l'operazione nella stazione |     Nome dell'evento registrato | Variabile in base alla tipologia di evento | Sigla identificativa del settaggio |
 |    Numero intero    |    Formato `yyyy-mm-dd hh:mm:ss`    |    Descrizione testuale    | Descrizione testuale    | Descrizione testuale    |    Descrizione testuale    |    STG    |
 
-### Values
+### Valori
 
-In questa tabella, vengono registrati tutti i Values relativi alla nave.
+In questa tabella, vengono registrati tutti i valori relativi alla nave.
 
 ## File di configurazione
 
@@ -61,7 +63,7 @@ Le credenziali vengono inserite durante la procedura di installazione
 ## Log
 ### Folder
 La cartella con i log vuoti deve essere inserita all'interno della cartella dell'utente di sistema: `C:\Windows\System32\config\systemprofile\AppData\Local\TCPScribe`
-### TYPElogia
+### Tipologia
 Il servizio scriverà all'interno dei 3 log:
 - ServiceErrorLog
 - ServiceInfoLog
@@ -118,7 +120,7 @@ Procedura per installare i vari programmi necessari e il servizio
 ## Creare cartella programma
 
 Questa guida è stata pensata per usare sempre i soliti percorsi.
-Se non si seguono esattamente i soliti passaggi, vyear regolati i path di conseguenza.
+Se non si seguono esattamente i soliti passaggi, vanno regolati i path di conseguenza.
 - Copiare la cartella "TCPScribe" sul desktop
 - Seguire il passaggio [Preparare file di configurazione](#preparare-file-di-configurazione) per quanto riguarda la cartella Windows
 
@@ -157,7 +159,7 @@ Andare su https://www.python.org/downloads/ e scaricare l'ultima versione
 ### Variabile di sistema
 
 Questa procedura è molto importante, perché senza di questa il servizio non partirà e darà Errore 1053
-- Cercare la directory di installazione di Python, solitamente `C:\Users\Cienne\AppData\Local\Programs\Python\PythonXXX`, dove al posto delle X ci saryear i numeri della versione
+- Cercare la directory di installazione di Python, solitamente `C:\Users\Cienne\AppData\Local\Programs\Python\PythonXXX`, dove al posto delle X ci saranno i numeri della versione
 - Copiare il percorso della cartella
 - Premere Win
 - Scrivere "Variabili di ambiente"
@@ -227,5 +229,5 @@ Questa procedura abilita l'utilizzo da terminale del comando `mysql`
 - Aprire "Servizi"
 - Trovare "TCP Scribe"
 - Premere due volte per aprire le proprietà
-- Su "TYPE di avvio" modificare da "Manuale" ad "Automatico"
+- Su "Tipo di avvio" modificare da "Manuale" ad "Automatico"
 - Premere il pulsante sottostante "Avvia"
