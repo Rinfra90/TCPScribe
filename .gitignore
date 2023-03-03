@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/.gitattributes
+/.gitignore
+/TCP Scribe.pyproj
+/TCP Scribe.sln
