@@ -23,8 +23,6 @@ Le credenziali di accesso al database sono immagazzinate in un file di configura
 
 Tutte le informazioni relative ad errori o azioni di processo, vengono invece immagazzinate all'interno di diversi file Log. Anche l'utilizzo di questi file, ha lo scopo di aiutare la manutenzione e il supporto in caso di eventuali problematiche da parte del distributore. Consultare la sezione [Log](#log) per maggiori informazioni.
 
-*Copyright © 2022 - [Cienne Solutions](https://www.ciennesolutions.it/) -  È vietata la redistribuzione e la pubblicazione dei contenuti e immagini non autorizzata espressamente dall´autore.*
-
 ## Struttura Database
 
 Il database è pensato per le esigenze di una nave ed è suddiviso in tre tabelle.
