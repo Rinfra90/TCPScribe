@@ -3,7 +3,7 @@ import os
 
 class LogWriter(object):
 
-    def __init__(self,path= os.path.expanduser(os.path.join('~','AppData','Local','TCPScribe'))):    #   OLD PATH: os.getenv('LOCALAPPDATA')+'\\TCPScribe\\Logs\\'
+    def __init__(self,path= os.path.expanduser(os.path.join('~','AppData','Local','TCPScribe'))):
         try:
             os.makedirs(path,exist_ok=True)
         finally:

@@ -1,7 +1,7 @@
 import os
-from Classi.DatabaseElements import myDatabaseTable
-from Classi.LogWriter import LogWriter
-from Classi.Query import Query
+from Classes.DatabaseElements import myDatabaseTable
+from Classes.LogWriter import LogWriter
+from Classes.Query import Query
 from datetime import datetime
 
 class Routines(object):
