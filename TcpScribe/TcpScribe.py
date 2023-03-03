@@ -14,7 +14,7 @@ from Classes.LogWriter import LogWriter
 from Classes.DatabaseElements import *
 from Routines import *
 
-class TcpService (win32serviceutil.ServiceFramework):
+class TcpScribe (win32serviceutil.ServiceFramework):
     _svc_name_ = "TCPServer"
     _svc_display_name_ = "TCP Server"
     
@@ -288,4 +288,4 @@ class TcpService (win32serviceutil.ServiceFramework):
                                     print(f"Error writing in log: {e}")
 
 if __name__ == '__main__':
-    win32serviceutil.HandleCommandLine(TcpService)
+    win32serviceutil.HandleCommandLine(TcpScribe)
