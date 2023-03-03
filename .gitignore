@@ -133,3 +133,7 @@ dmypy.json
 /TCP Scribe.sln
 *.vsidx
 *.lock
+/.vs/TCP Scribe/v17/fileList.bin
+/.vs/TCP Scribe/v17/.suo
+/.vs/slnx.sqlite
+/.vs/TCP Scribe/FileContentIndex/119a2ad4-fd1c-4ecb-98a0-fde278ca305c.vsidx
