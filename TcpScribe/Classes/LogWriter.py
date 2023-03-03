@@ -3,7 +3,7 @@ import os
 
 class LogWriter(object):
 
-    def __init__(self,path= os.path.expanduser(os.path.join('~','AppData','Local','TcpServer'))):    #   OLD PATH: os.getenv('LOCALAPPDATA')+'\\TCPServer\\Logs\\'
+    def __init__(self,path= os.path.expanduser(os.path.join('~','AppData','Local','TCPScribe'))):    #   OLD PATH: os.getenv('LOCALAPPDATA')+'\\TCPScribe\\Logs\\'
         try:
             os.makedirs(path,exist_ok=True)
         finally:
@@ -16,7 +16,7 @@ class LogWriter(object):
         now = datetime.now()
         date_time = now.strftime("%d/%m/%Y - %H:%M:%S")
         f = open(FileLog, "a", encoding='Windows-1252') #codifica per excel
-        f.write("Data\ora " + date_time + "\n")
+        f.write("Data\hour " + date_time + "\n")
         f.write(Message)
         f.write("\n")
         f.close()

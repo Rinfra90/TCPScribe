@@ -52,41 +52,39 @@ class DataReceiver(object):
 
     def ConnectionAccept(self):
         self.connSocket, self.addr = self.serverSocket.accept()
-
-    #   ManageBuffer() - Elabora ed interpreta il buffer
-    #   Return classi Evento, Valore, Settaggio
-    #   In caso di errori, Return:
-    #       False - Connessione con l'host non presente
-    #       None - Errore con i dati
-    #       'ka' - Ricevuto Keep Alive
-    #   Struttura Buffer:   NNNN[NEW]DATIBUFFER[NEW]DATIBUFFER
-    #   Struttura dati: DATA ORA - EVENTO[TIPO]
-    #   I tipi di dati possono essere
+        
+    #   In case off errors Return:
+    #       False - Host connection not present
+    #       None - Data error
+    #       'ka' - Keep Alive received
+    #   Buffer structure:   NNNN[NEW]BUFFERDATA[NEW]BUFFERDATA
+    #   Data structure: DATE TIME - EVENT[TYPE]
+    #   Type of datas can be
     #       [ALV] - Keep Alive
-    #       [EVN]/[ALM]/[BLK] - Eventi, allarmi ed allarmi bloccati
-    #           Struttura: DATA ORA - EVENTO - VALORE[EVN/ALM/BLK]
-    #       [VLE] - Valori
-    #           Struttura: DATA ORA - EVENTO - VALORE - UNITA'[VLE]
-    #           I valori sono solo numeri
-    #       [STG] - Settaqggi
-    #           Struttura: DATA ORA - STAZIONE - OPERATORE - EVENTO - VALORE[STG]
-    #           I valori non sono solo numeri
+    #       [EVN]/[ALM]/[BLK] - Events, alarms and blocked alarms
+    #           Structure: DATE TIME - EVENT - VALUE[EVN/ALM/BLK]
+    #       [VLE] - Values
+    #           Structure: DATE TIME - EVENT - VALUE - UNIT[VLE]
+    #           Values are only numbers
+    #       [STG] - Settings
+    #           Structure: DATE TIME - STATION - OPERATOR - EVENT - VALUE[STG]
+    #           Values are not only numbers
     def ManageBuffer(self):
         
         writer = LogWriter()
         finalBuffer = []
-        messaggio = ''
+        message = ''
 
-        #   Tentativo di ricezione del buffer
+        #   Buffer reception attempt
         try:
             bufferRecevedStr = self.RecvBuffer()
 
         except Exception as e:
-            print(f"Errore nella connessione all'host: {e}'")
+            print(f"Host connection error: {e}'")
             return False
 
         else:
-            #   Gestione del Keep Alive
+            #   Keep Alive management
             if bufferRecevedStr.find('[ALV]') != -1:
                 self.dataReady = False
                 return 'ka'
@@ -95,86 +93,86 @@ class DataReceiver(object):
 
             self.receivedBytes = self.GetNByte(bufferRecevedStr)
 
-            #   Controllo che il buffer sia arrivato integro
+            #   Buffer integrity check
             if self.receivedBytes > 0:
                 self.dataReady = True
             
-            print(f"Byte del blocco = {self.receivedBytes}")
+            print(f"Block bytes = {self.receivedBytes}")
             
-            #   Azzerp byteRicevuti per evitare numeri in memoria non corretti
+            #   receivedBytes reset to not sthourge incorrect data
             self.receivedBytes = 0
 
             if self.dataReady:
-                print("Elaboro i dati...")
+                print("Processing data...")
 
                 self.dataReady = False
 
-                #   Trovo il primo [NEW] (escludendo il numero di byte) e prendo solo il buffer di dati
+                #   Find first [NEW] and get first data buffer
                 bufferRecevedStr = bufferRecevedStr[bufferRecevedStr.find("[NEW]")+5:]
 
-                #   Creo una lista listOfData contenente i vari dati
+                #   Define listOfData containing data
                 listOfData = bufferRecevedStr.split("[NEW]")
                 
-                #   Interpreto i dati ad uno ad uno
-                for dataRicevuto in listOfData:
+                #   Data interpretation one by one
+                for receivedData in listOfData:
                     
                     noTag = False
                     VLEdata = False
                     STGdata = False
 
-                    #   Verifico il Tipo del dato
-                    #   VLE - Valori / STG - Settaggi / EVN - Eventi / ALM - Allarmi / BLK - Blocchi / ERR - Dati senza tipo
-                    if dataRicevuto.find("[VLE]") != -1:
+                    #   Data Type Check
+                    #   VLE - Values / STG - Settings / EVN - Events / ALM - alarms / BLK - Blocked alarms / ERR - no type data
+                    if receivedData.find("[VLE]") != -1:
                         VLEdata = True
-                        Type = 'VLE' #  Dato per database
-                    elif dataRicevuto.find("[STG]") != -1 :
+                        Type = 'VLE' #  Database element
+                    elif receivedData.find("[STG]") != -1 :
                         STGdata = True
-                        Type = 'STG' #  Dato per database
-                    elif dataRicevuto.find("[EVN]") != -1 :
-                        Type = 'EVN' #  Dato per database
-                    elif dataRicevuto.find("[ALM]") != -1 :
-                        Type = 'ALM' #  Dato per database
-                    elif dataRicevuto.find("[BLK]") != -1 :
-                        Type = 'BLK' #  Dato per database
+                        Type = 'STG' #  Database element
+                    elif receivedData.find("[EVN]") != -1 :
+                        Type = 'EVN' #  Database element
+                    elif receivedData.find("[ALM]") != -1 :
+                        Type = 'ALM' #  Database element
+                    elif receivedData.find("[BLK]") != -1 :
+                        Type = 'BLK' #  Database element
                     else :
                         noTag = True
                         try:
-                            messaggio = "Nessun TAG rilevato. Lunghezza Stringa:"+str(len(dataRicevuto))+'\n'+dataRicevuto+'\n'
+                            message = "Nessun TAG rilevato. Lunghezza Stringa:"+str(len(receivedData))+'\n'+receivedData+'\n'
                         except Exception as e:
-                            print(f"Errore nella scrittura su log: {e}")
-                        print(messaggio)
-                        writer.writeLog(messaggio, writer.path+"ErrorLog_"+writer.filecode+".Log")
-                        Type = 'ERR' #  Dato per database
+                            print(f"Log writing error: {e}")
+                        print(message)
+                        writer.writeLog(message, writer.path+"ErrorLog_"+writer.filecode+".Log")
+                        Type = 'ERR' #  Database element
                         
-                    #   Rimuovo il tag
+                    #   Tag remove
                     if not noTag :
-                            dataRicevuto = dataRicevuto.replace(f"[{Type}]","")
+                            receivedData = receivedData.replace(f"[{Type}]","")
                             
-                    #   Separo data e messaggio
-                    spazi = 0 # Contatore di spazi
-                    iPos = 0 #  Indicatore della posizione di divisione
-                    for carattere in dataRicevuto:
-                        if spazi < 3 :
-                            if carattere==" ":
-                                spazi += 1
+                    #   Date and message split
+                    spaces = 0 # Spaces counter
+                    iPos = 0 #  Split position indicator
+                    for char in receivedData:
+                        if spaces < 3 :
+                            if char==" ":
+                                spaces += 1
                             iPos +=1
                         else :
                             break
 
-                    #   Scrivo su due variabili separate la data e il messaggio
-                    strDate = dataRicevuto[:iPos-1]
-                    strMsg = dataRicevuto[iPos:]
+                    #   Store date and message in two different variables
+                    strDate = receivedData[:iPos-1]
+                    strMsg = receivedData[iPos:]
 
-                    #   Divisione e riformattazione data e ora
-                    dataTempo = strDate.split(' - ')
-                    data = dataTempo[0].split('-')
-                    anno = data[2]
-                    mese = data[1]
-                    giorno = data[0]
-                    ora = dataTempo[1]
-                    dataTempo = f"{anno}-{mese}-{giorno} {ora}"
+                    #   Date time split and formatting
+                    dateTime = strDate.split(' - ')
+                    date = dateTime[0].split('-')
+                    year = date[2]
+                    month = date[1]
+                    day = date[0]
+                    hour = dateTime[1]
+                    dateTime = f"{year}-{month}-{day} {hour}"
 
-                    event = strMsg #    Dato per database - Lo registro adesso e poi lo modifico in caso di valore
+                    event = strMsg #    Database element - assign it and modify it if value
 
                     if VLEdata:
 
@@ -182,9 +180,9 @@ class DataReceiver(object):
 
                         fields = strMsg.split(' - ')
                         try:
-                            writer.writeLog(messaggio, writer.path+"Log_"+writer.filecode+".Log")
+                            writer.writeLog(message, writer.path+"Log_"+writer.filecode+".Log")
                         except Exception as e:
-                            print(f"Errore nella scrittura su log: {e}")
+                            print(f"Log writing error: {e}")
 
                         if len(fields) == 2:
                             ValUnit = fields[1].split(" ")
@@ -193,28 +191,28 @@ class DataReceiver(object):
                         elif len(fields) == 4 : 
                             ValUnit = fields[1]
                         else:
-                            messaggio = "*****ATTENZIONE !!! Errore Decode Campi*****,"+strMsg+"-- Numero campi trovati: "+str(len(fields))+"\n"+dataRicevuto+'\n'
-                            print(messaggio)
+                            message = "*****ATTENTION !!! Field decode error*****,"+strMsg+"-- Fields number found: "+str(len(fields))+"\n"+receivedData+'\n'
+                            print(message)
                             try:
-                                writer.writeLog(messaggio, writer.path+"ErrorLog_"+writer.filecode+".Log")
+                                writer.writeLog(message, writer.path+"ErrorLog_"+writer.filecode+".Log")
                             except Exception as e:
-                                print(f"Errore nella scrittura su log: {e}")
+                                print(f"Log writing error: {e}")
                             finalBuffer.append(None)
                         try:
                             recordData = Value(
-                                data= dataTempo,
+                                date= dateTime,
                                 event= fields[0],
                                 value= ValUnit[0],
                                 unit= ValUnit[1]
                                 )
                             finalBuffer.append(recordData)
                         except Exception as e:
-                            messaggio = f"Errore nella scrittura del valore: {e}\n"+dataRicevuto+'\n'
-                            print(messaggio)
+                            message = f"Error writing value: {e}\n"+receivedData+'\n'
+                            print(message)
                             try:
-                                writer.writeLog(messaggio, writer.path+"ErrorLog_"+writer.filecode+".Log")
+                                writer.writeLog(message, writer.path+"ErrorLog_"+writer.filecode+".Log")
                             except Exception as e:
-                                print(f"Errore nella scrittura su log: {e}")
+                                print(f"Log writing error: {e}")
                             finalBuffer.append(None)
 
                     elif STGdata:
@@ -224,21 +222,21 @@ class DataReceiver(object):
                         fields = strMsg.split(' - ')
 
                         if len(fields) < 4:
-                            messaggio = "*****ATTENZIONE !!! Errore Decode Campi*****,"+strMsg+"-- Numero campi trovati: "+str(len(fields))+dataRicevuto+'\n'
-                            print(messaggio)
+                            message = "*****ATTENTION !!! Field decode error*****,"+strMsg+"-- Fields number found: "+str(len(fields))+receivedData+'\n'
+                            print(message)
                             try:
-                                writer.WriteLog(messaggio, writer.path+"ErrorLog_"+writer.filecode+".Log")
+                                writer.WriteLog(message, writer.path+"ErrorLog_"+writer.filecode+".Log")
                             except Exception as e:
-                                print(f"Errore nella scrittura su log: {e}")
+                                print(f"Log writing error: {e}")
                         else:
-                            tempMsg = fields[2:] #  Scrivo i vari pezzi del messaggio e il valore in TempMsg. Il valore finisce sull'ultimo valore.
-                            tempValue = tempMsg[len(tempMsg)-1] #   Estrapolo il valore dall'ultimo set di TempMsg (Formattato cos�: 'SET TO VALORE')
+                            tempMsg = fields[2:] #  Write message and value in TempMsg. Value is stored as last one.
+                            tempValue = tempMsg[len(tempMsg)-1] #   Extract Value (Format: 'SET TO VALUE')
                             value = tempValue[7:]
-                            #   Ricompatto il messaggio
+                            #   Rejoin message
                             event = ' - '.join(tempMsg[:len(tempMsg)-1])
                             try:
                                 recordData = Settings(
-                                    data= dataTempo,
+                                    date= dateTime,
                                     station= fields[0],
                                     operator= fields[1],
                                     event= event,
@@ -246,12 +244,12 @@ class DataReceiver(object):
                                     )
                                 finalBuffer.append(recordData)
                             except:
-                                messaggio = "*****ATTENZIONE !!! Errore Decode Campi*****,"+strMsg +"-- Numero campi trovati: "+str(len(fields))+dataRicevuto+'\n'
-                                print(messaggio)
+                                message = "*****ATTENTION !!! Field decode error*****,"+strMsg +"-- Fields number found: "+str(len(fields))+receivedData+'\n'
+                                print(message)
                                 try:
-                                    writer.WriteLog(messaggio, writer.path+"ErrorLog_"+writer.filecode+".Log")
+                                    writer.WriteLog(message, writer.path+"ErrorLog_"+writer.filecode+".Log")
                                 except Exception as e:
-                                    print(f"Errore nella scrittura su log: {e}")
+                                    print(f"Log writing error: {e}")
                                 finalBuffer.append(None)
                     
                     else:
@@ -262,19 +260,19 @@ class DataReceiver(object):
                             value = value[:25]
                     
                         recordData = Event(
-                            data= dataTempo,
+                            date= dateTime,
                             event= event,
                             value= value,
                             signalType= Type
                             )
                         finalBuffer.append(recordData)
             else:
-                messaggio = "Dati incoerenti possibile perdita di informazioni"
-                print(messaggio)
+                message = "Inconsistent data possible loss of information"
+                print(message)
                 try:
-                    writer.WriteLog(messaggio, writer.path+"ErrorLog_"+writer.filecode+".Log")
+                    writer.WriteLog(message, writer.path+"ErrorLog_"+writer.filecode+".Log")
                 except Exception as e:
-                    print(f"Errore nella scrittura su log: {e}")
+                    print(f"Log writing error: {e}")
                 finalBuffer.append(None)
 
             return finalBuffer

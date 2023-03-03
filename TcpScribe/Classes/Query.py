@@ -82,7 +82,7 @@ db - Indica il database da eliminare o da cui eliminare la tabella
 CREATE:
 tb - Se non viene inserito niente, viene creato il database
 db - Indica il database da creare o su cui creare la tabella
-**val - Aggiungere argomenti aggiuntivi per indicare la struttura di una tabella.
+**val - Aggiungere argomenti aggiuntivi per indicare la Structure di una tabella.
         Formato NOMEVAR = 'PROPRIETA'
         es:
         id = "NOT NULL AUTO_INCREMENT"
@@ -91,13 +91,13 @@ db - Indica il database da creare o su cui creare la tabella
 engine - Di default e' 'InnoDb'
 --------------------------
 INSERT:
-db - Identifica il database sui cui verranno inseriti i dati
-tb - Identifica le tabelle in cui verranno inseriti i dati
-**val - Aggiungere argomenti aggiuntivi per definire i campi dove inserirli e i valori da inserire.
-        Formato campo = 'valore'
+db - Identifica il database sui cui verryear inseriti i dati
+tb - Identifica le tabelle in cui verryear inseriti i dati
+**val - Aggiungere argomenti aggiuntivi per definire i campi dove inserirli e i Values da inserire.
+        Formato campo = 'VALUE'
         es:
-        Valori='2'
-        Inserisce un nuovo elemento nella/e tabella/e tb con Valore '2' nel campo 'Valori'
+        Values='2'
+        Inserisce un nuovo elemento nella/e tabella/e tb con VALUE '2' nel campo 'Values'
 ---------------------------------------------------""") 
         
     #Metodo per analizzare l'integrit� dei dati e che restituisce la query completa o False in caso i dati non siano corretti
@@ -142,8 +142,8 @@ tb - Identifica le tabelle in cui verranno inseriti i dati
 
                                 checkKey = False
                             
-                                for chiave, valore in self.tb.campi.items():
-                                    sendQuery = sendQuery + f"{chiave} {valore}" + ",\n"
+                                for chiave, VALUE in self.tb.campi.items():
+                                    sendQuery = sendQuery + f"{chiave} {VALUE}" + ",\n"
                                     if self.tb.priKey == chiave:
                                         checkKey = True
 
@@ -153,7 +153,7 @@ tb - Identifica le tabelle in cui verranno inseriti i dati
                                         sendQuery = sendQuery + f"ENGINE = {self.tb.engine};"
                                         check = True
                                     else:
-                                        print(f"Errore nell'esecuzione della Query {self.instr.upper()}: La chiave non corrisponde a nessun valore")
+                                        print(f"Errore nell'esecuzione della Query {self.instr.upper()}: La chiave non corrisponde a nessun VALUE")
                                         return False
                                 else:
                                     print(f"Errore nell'esecuzione della Query {self.instr.upper()}: Specificare la chiave primaria della tabella")
@@ -211,7 +211,7 @@ tb - Identifica le tabelle in cui verranno inseriti i dati
                                 sendQuery = "INSERT INTO {} ({})\nVALUES ('{}');".format(tbNomi,keys,vals)
                                 check = True
                             else:
-                                print(f"Errore nell'esecuzione della Query {self.instr.upper()}: Valori da inserire non specificati")
+                                print(f"Errore nell'esecuzione della Query {self.instr.upper()}: Values da inserire non specificati")
                                 return False
 
                         elif self.instr.upper() == 'DELETE':

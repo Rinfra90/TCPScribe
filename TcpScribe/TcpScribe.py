@@ -15,14 +15,14 @@ from Classes.DatabaseElements import *
 from Routines import *
 
 class TcpScribe (win32serviceutil.ServiceFramework):
-    _svc_name_ = "TCPServer"
-    _svc_display_name_ = "TCP Server"
+    _svc_name_ = "TCPScribe"
+    _svc_display_name_ = "TCP Scribe"
     
     def __init__(self,args):
 
         #   Path definition for log and config file
         #   NOTE: when running a service, expanduser return "C:\Windows\System32\config\systemprofile"
-        path = os.path.expanduser(os.path.join("~","AppData","Local","TcpServer"))
+        path = os.path.expanduser(os.path.join("~","AppData","Local","TCPScribe"))
 
         #   Logs define
         self.infoLog = logging.getLogger("InfoLog")
@@ -51,7 +51,7 @@ class TcpScribe (win32serviceutil.ServiceFramework):
 
         #   Define of ConfigParser object to read .cfg files
         config = configparser.ConfigParser()
-        configpath = os.path.expanduser(os.path.join("~","AppData","Local","TcpServer"))
+        configpath = os.path.expanduser(os.path.join("~","AppData","Local","TCPScribe"))
         configfile = configpath+"/config.cfg"
         #   If file does not exist, I define it to not run in error
         if not os.path.exist(configfile):
@@ -106,7 +106,7 @@ class TcpScribe (win32serviceutil.ServiceFramework):
         count = 0 # Cycles executed
         
         config = configparser.ConfigParser()
-        configpath = os.path.expanduser(os.path.join("~","AppData","Local","TcpServer"))
+        configpath = os.path.expanduser(os.path.join("~","AppData","Local","TCPScribe"))
         configfile = configpath+"/config.cfg"
         if not os.path.exist(configfile):
             try:
