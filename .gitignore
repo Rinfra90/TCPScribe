@@ -131,3 +131,5 @@ dmypy.json
 /.gitignore
 /TCP Scribe.pyproj
 /TCP Scribe.sln
+*.vsidx
+*.lock
