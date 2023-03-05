@@ -58,7 +58,7 @@ class DataReceiver(object):
     #       None - Data error
     #       'ka' - Keep Alive received
     #   Buffer structure:   NNNN[NEW]BUFFERDATA[NEW]BUFFERDATA
-    #   Data structure: DATE TIME - EVENT[TYPE]
+    #   Date structure: DATE TIME - EVENT[TYPE]
     #   Type of datas can be
     #       [ALV] - Keep Alive
     #       [EVN]/[ALM]/[BLK] - Events, alarms and blocked alarms
@@ -191,7 +191,7 @@ class DataReceiver(object):
                         elif len(fields) == 4 : 
                             ValUnit = fields[1]
                         else:
-                            message = "*****ATTENTION !!! Field decode error*****,"+strMsg+"-- Fields number found: "+str(len(fields))+"\n"+receivedData+'\n'
+                            message = "*****WARNING !!! Field decode error*****,"+strMsg+"-- Fields number found: "+str(len(fields))+"\n"+receivedData+'\n'
                             print(message)
                             try:
                                 writer.writeLog(message, writer.path+"ErrorLog_"+writer.filecode+".Log")
@@ -222,7 +222,7 @@ class DataReceiver(object):
                         fields = strMsg.split(' - ')
 
                         if len(fields) < 4:
-                            message = "*****ATTENTION !!! Field decode error*****,"+strMsg+"-- Fields number found: "+str(len(fields))+receivedData+'\n'
+                            message = "*****WARNING !!! Field decode error*****,"+strMsg+"-- Fields number found: "+str(len(fields))+receivedData+'\n'
                             print(message)
                             try:
                                 writer.WriteLog(message, writer.path+"ErrorLog_"+writer.filecode+".Log")
@@ -244,7 +244,7 @@ class DataReceiver(object):
                                     )
                                 finalBuffer.append(recordData)
                             except:
-                                message = "*****ATTENTION !!! Field decode error*****,"+strMsg +"-- Fields number found: "+str(len(fields))+receivedData+'\n'
+                                message = "*****WARNING !!! Field decode error*****,"+strMsg +"-- Fields number found: "+str(len(fields))+receivedData+'\n'
                                 print(message)
                                 try:
                                     writer.WriteLog(message, writer.path+"ErrorLog_"+writer.filecode+".Log")

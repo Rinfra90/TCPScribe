@@ -13,25 +13,25 @@ class Event(object):
 
     lastid = 0
 
-    def __init__(self, data, event, value, signalType=''):
+    def __init__(self, date, event, value, signalType=''):
         Event.lastid += 1
         self.id = Event.lastid
-        self.data = data
+        self.date = date
         self.event = event
         self.value = value
         self.signalType = signalType
     
 class Value(Event):
 
-    def __init__(self, data, event, value, unit):
-        super().__init__(data,event,value)
+    def __init__(self, date, event, value, unit):
+        super().__init__(date,event,value)
         self.unit = unit
         self.signalType = 'VLE'
 
 class Settings(Event):
 
-    def __init__(self, data, station, operator, event, value):
-        super().__init__(data,event,value)
+    def __init__(self, date, station, operator, event, value):
+        super().__init__(date,event,value)
         self.station = station
         self.operator = operator
         self.signalType = 'STG'

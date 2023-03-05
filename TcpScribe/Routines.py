@@ -6,13 +6,13 @@ from datetime import datetime
 
 class Routines(object):
 
-    __miaQuery = Query()
+    __myQuery = Query()
     __now = datetime.now
 
     @classmethod
     def setRoutine(cls, host='localhost', port=3306, user='root', psw='', oldpsw=''):
-        cls.__miaQuery.SetServer(host,port)
-        cls.__miaQuery.SetCredenziali(user,psw,oldpsw)
+        cls.__myQuery.SetServer(host,port)
+        cls.__myQuery.SetCredenziali(user,psw,oldpsw)
     
     @classmethod
     def DeleteOldRecords(cls, database, tb):
@@ -22,42 +22,42 @@ class Routines(object):
 
         writer = LogWriter()
         
-        tbNome = ''
+        tbName = ''
         
         if type(tb) == tuple or type(tb) == list:
-            for tabella in tb:
-                if type(tabella) == myDatabaseTable:
-                    tbNome = tabella.nome
-                elif type(tabella) == str:
-                    tbNome = tabella
-                cls.Deleter(lastYear, database, tbNome, writer)
+            for table in tb:
+                if type(table) == myDatabaseTable:
+                    tbName = table.name
+                elif type(table) == str:
+                    tbName = table
+                cls.Deleter(lastYear, database, tbName, writer)
 
         elif type(tb) == myDatabaseTable:
-            tbNome = tb.nome
-            cls.Deleter(lastYear, database, tbNome, writer)
+            tbName = tb.name
+            cls.Deleter(lastYear, database, tbName, writer)
 
         else:
-            tbNome = tb
-            cls.Deleter(lastYear, database, tbNome, writer)
+            tbName = tb
+            cls.Deleter(lastYear, database, tbName, writer)
 
 
     @classmethod
     def Deleter(cls,lastYear, database, tbNome, writer):
         try:
-            cls.__miaQuery.QueryExecute(
+            cls.__myQuery.QueryExecute(
                 instr= 'DELETE',
-                where= f"Data < '{lastYear}'",
+                where= f"Date < '{lastYear}'",
                 db= database,
                 tb= tbNome
                 )
-            print("Dati vecchi cancellati")
+            print("Old data deleted")
         except Exception as e:
-            messaggio = f"Errore nell'eliminazione dei vecchi dati: {e}"
-            print(messaggio)
+            message = f"Error deleting old datas: {e}"
+            print(message)
             try:
-                writer.writeLog(messaggio, writer.path+"ErrorLog_"+writer.filecode+".Log")
+                writer.writeLog(message, writer.path+"ErrorLog_"+writer.filecode+".Log")
             except Exception as e:
-                print(f"Errore nella scrittura del file log: {e}")
+                print(f"Error writing log file: {e}")
     
     @classmethod
     def DeleteNotSoOldRecords(cls, database, tb):
@@ -68,19 +68,19 @@ class Routines(object):
         writer = LogWriter()
 
         try:
-            cls.__miaQuery.QueryExecute(
+            cls.__myQuery.QueryExecute(
                 instr= 'DELETE',
-                where= f"Data < '{lastDay}'",
+                where= f"Date < '{lastDay}'",
                 db= database,
                 tb= tb
                 )
         except Exception as e:
-            messaggio = f"Errore nell'eliminazione dei vecchi dati: {e}"
-            print(messaggio)
+            message = f"Error deleting old datas: {e}"
+            print(message)
             try:
-                writer.writeLog(messaggio, writer.path+"ErrorLog_"+writer.filecode+".Log")
+                writer.writeLog(message, writer.path+"ErrorLog_"+writer.filecode+".Log")
             except Exception as e:
-                print(f"Errore nella scrittura del file log: {e}")
+                print(f"Error writing log file: {e}")
 
     @classmethod
     def fileExcel(cls, database, tb, col, where='', path='/', outfile='dbRecord', ext='.xls'):
@@ -101,8 +101,8 @@ class Routines(object):
                     c += 1
        
         try:
-            print("Eseguo Query")
-            cls.__miaQuery.QueryExecute(
+            print("Executing query")
+            cls.__myQuery.QueryExecute(
                 instr= 'SELECT',
                 where= where,
                 db= database,
@@ -110,11 +110,11 @@ class Routines(object):
                 col= col,
                 outfile= path+outfile+counter+ext
                 )
-            print("Query eseguita")
+            print("Query executed")
         except Exception as e:
-            messaggio = f"Errore nella creazione del file Excel: {e}"
-            print(messaggio)
+            message = f"Error creating Excel file: {e}"
+            print(message)
             try:
-                writer.writeLog(messaggio, writer.path+"ErrorLog_"+writer.filecode+".Log")
+                writer.writeLog(message, writer.path+"ErrorLog_"+writer.filecode+".Log")
             except Exception as e:
-                print(f"Errore nella scrittura del file log: {e}")
+                print(f"Error writing log file: {e}")

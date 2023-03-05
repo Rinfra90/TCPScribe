@@ -140,39 +140,39 @@ class TcpScribe (win32serviceutil.ServiceFramework):
             'Events',
             'id',
             id= "INT NOT NULL AUTO_INCREMENT",
-            data= "DATETIME NOT NULL",
+            date= "DATETIME NOT NULL",
             event= "VARCHAR(120) NULL",
             value= "VARCHAR(25) NULL",
             signalType= "ENUM('EVN','ALM','BLK','ERR') NOT NULL",
             FULLTEXT= "INDEX idx_evnt (event)",
-            INDEX= "idx_data (data) USING BTREE"
+            INDEX= "idx_data (date) USING BTREE"
             )
         Values = myDatabaseTable(
             database,
             'Values',
             'id',
             id= "INT NOT NULL AUTO_INCREMENT",
-            data= "DATETIME NOT NULL",
+            date= "DATETIME NOT NULL",
             event= "VARCHAR(120) NULL",
             value= "DECIMAL(10, 2) NULL",
             unit= "VARCHAR(10) NULL",
             signalType= "ENUM('VLE') NOT NULL",
             FULLTEXT= "INDEX idx_evnt (event)",
-            INDEX= "idx_data (data) USING BTREE"
+            INDEX= "idx_data (date) USING BTREE"
             )
         Settings = myDatabaseTable(
             database,
             'Settings',
             'id',
             id= "INT NOT NULL AUTO_INCREMENT",
-            data= "DATETIME NOT NULL",
+            date= "DATETIME NOT NULL",
             station= "VARCHAR(50) NULL",
             operator= "VARCHAR(50) NULL",
             event= "VARCHAR(120) NULL",
             value= "DECIMAL(10, 2) NULL",
             signalType= "ENUM('STG') NOT NULL",
             FULLTEXT= "INDEX idx_evnt (event)",
-            INDEX= "idx_data (data) USING BTREE"
+            INDEX= "idx_data (date) USING BTREE"
             )
 
         tables = [
@@ -254,7 +254,7 @@ class TcpScribe (win32serviceutil.ServiceFramework):
                                         instr='INSERT',
                                         db=database,
                                         tb=Values,
-                                        data=response.data,
+                                        date=response.date,
                                         event=response.event,
                                         value=response.value,
                                         unit=response.unit,
@@ -265,7 +265,7 @@ class TcpScribe (win32serviceutil.ServiceFramework):
                                         instr='INSERT',
                                         db=database,
                                         tb=Settings,
-                                        data=response.data,
+                                        date=response.date,
                                         station=response.station,
                                         operator=response.operator,
                                         event=response.event,
@@ -276,7 +276,7 @@ class TcpScribe (win32serviceutil.ServiceFramework):
                                         instr='INSERT',
                                         db=database,
                                         tb=Events,
-                                        data=response.data,
+                                        date=response.date,
                                         event=response.event,
                                         value=response.value,
                                         signalType=response.signalType)

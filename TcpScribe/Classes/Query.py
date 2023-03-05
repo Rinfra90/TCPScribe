@@ -15,7 +15,7 @@ class Query:
         self.tb = '*'
         self.col = '*'
         self.outfile = ''
-        self.connDb = connDb #Variabile utilizzata per verificare se � necessario connettersi a un db per eseguire la query
+        self.connDb = connDb    #   Used to verify if db connection is needed to execut a query
 
     @classmethod
     def SetServer(cls,newHost,newPort):
@@ -28,82 +28,82 @@ class Query:
         print(f"Port: {cls.__port}")
         
     @classmethod
-    def SetCredenziali(cls,newUser,newPassword,oldPassword=''):
+    def SetCredential(cls,newUser,newPassword,oldPassword=''):
         cls.__user = newUser
         if oldPassword == cls.__psw:
             cls.__psw = newPassword
         else:
-            print("Password non cambiata. Vecchia password incoerente")
+            print("Password not changed. Old password inconsistent")
 
     @classmethod
-    def GetCredenziali(cls):
+    def GetCredential(cls):
         print(f"User: {cls.__user}")
         if cls.__psw != '':
-           print("Password settata")
+           print("Password set")
         else:
-            print("Password non settata")
+            print("Password not set")
 
     @staticmethod
     def Info():
         print("""---------------------------------------------------
-Istruzioni
+Instructions
 ---------------------------------------------------
 Class Query:
-Variabili:  __host
+Variables:  __host
             __port
             __user
             __psw
-Settabili e visualizzabili tramite i seguenti metodi:
-SetCredenziali(newUser,newPassword,oldPassword),
-GetCredenziali(),
+Settable and gettable using those methods:
+SetCredential(newUser,newPassword,oldPassword),
+GetCredential(),
 SetServer(newHost,newPort),
 GetServer()
 ---------------------------------------------------
 Info():
-Informazioni sulla classe e su come utilizzare i metodi della classe
+Info about class and how to use it
 ---------------------------------------------------
-EseguiQuery(instr,where,db,tb,col,engine,doubleCheck,pers,**val)
+QueryExecute(instr,where,db,tb,col,engine,doubleCheck,pers,**val)
 ---------------------------------------------------
-instr - Ammette 'SELECT','DROP','CREATE' e 'INSERT'
+instr - Allowed instructions 'SELECT','DROP','CREATE', 'INSERT' and 'DELETE'
 --------------------------
-pers - viene utilizzato per inviare query personalizzate. Inserire il testo completo all'interno di 'instr'
-doubleCheck - utilizzata per scegliere se aggiungere 'IF NOT EXISTS' in fase di creazione tabelle e database
+pers - Used to send personalized query. Insert full text into 'instr'
+doubleCheck - Used to check if 'IF NOT EXISTS' is needed in table and database creation
 --------------------------
 SELECT:
-db - Identifica il database a cui connettersi
-col - Le colonne da ricercare vengono passate qui
-tb - Identifica le tabelle su cui eseguire le query
-where - Inserire qui tutte le varie condizioni che si vogliono aggiungere
+db - Identify the database to connect to
+col - Column to search for
+tb - Identify the tables to query
+where - Insert where conditions here
 --------------------------
 DROP:
-tb - Se non viene inserito niente, viene eliminato il database
-db - Indica il database da eliminare o da cui eliminare la tabella
+tb - If empty, database get delete
+db - Database to be deleted or table's database to be deleted
 --------------------------
 CREATE:
-tb - Se non viene inserito niente, viene creato il database
-db - Indica il database da creare o su cui creare la tabella
-**val - Aggiungere argomenti aggiuntivi per indicare la Structure di una tabella.
-        Formato NOMEVAR = 'PROPRIETA'
-        es:
+tb - If empty, create database
+db - Database to be created or table's database to be created
+**val - Additional arguments to define table structure
+        Format VARNAME = 'PROPERTY'
+        example:
         id = "NOT NULL AUTO_INCREMENT"
-        Risulta nella seguente query:
+        Result:
         id NOT NULL AUTO_INCREMENT
-engine - Di default e' 'InnoDb'
+engine - 'InnoDb' by default
 --------------------------
 INSERT:
-db - Identifica il database sui cui verryear inseriti i dati
-tb - Identifica le tabelle in cui verryear inseriti i dati
-**val - Aggiungere argomenti aggiuntivi per definire i campi dove inserirli e i Values da inserire.
-        Formato campo = 'VALUE'
-        es:
+db - Database to insert data in
+tb - Table to insert data in
+**val - Additional arguments to define fields and values to insert
+        Field format = 'VALUE'
+        example:
         Values='2'
-        Inserisce un nuovo elemento nella/e tabella/e tb con VALUE '2' nel campo 'Values'
+        Insert new element into table tb with value '2' in 'Values' field
 ---------------------------------------------------""") 
         
-    #Metodo per analizzare l'integrit� dei dati e che restituisce la query completa o False in caso i dati non siano corretti
+    #   Method to analyze data integrity. Return full query or False if incorrect data
     def __CheckQuery(self, **args):
 
-        check = False #Variabile utilizzata per verificare l'integrit� della query
+        check = False   #   Uesd to verify query integrity
 
         val = False
 
@@ -117,7 +117,7 @@ tb - Identifica le tabelle in cui verryear inseriti i dati
                 keys = ', '.join(value.keys())
                 vals = ', '.join(value.values())
 
-        #Guardo se � una query personalizzata e nel caso la eseguo
+        #   Check if personalized query then execute it
         if pers:
             if self.instr[-1] != ';':
                 self.instr = self.instr + ';'
@@ -125,7 +125,7 @@ tb - Identifica le tabelle in cui verryear inseriti i dati
 
         else:
             if self.db != '':
-                #Identifico le istruzioni preimpostate
+                #   Identify presetted instruction
                 if self.instr.upper() == 'CREATE':
                         if doubleCheck == True:
                             doubleCheck = "IF NOT EXISTS "
@@ -136,15 +136,15 @@ tb - Identifica le tabelle in cui verryear inseriti i dati
                             check = True
                             self.connDb = False
                         else:
-                            sendQuery = "CREATE TABLE " + doubleCheck + f"{self.tb.nome}\n(\n"
+                            sendQuery = "CREATE TABLE " + doubleCheck + f"{self.tb.name}\n(\n"
                             
-                            if self.tb.campi.values():
+                            if self.tb.fields.values():
 
                                 checkKey = False
                             
-                                for chiave, VALUE in self.tb.campi.items():
-                                    sendQuery = sendQuery + f"{chiave} {VALUE}" + ",\n"
-                                    if self.tb.priKey == chiave:
+                                for key, value in self.tb.fields.items():
+                                    sendQuery = sendQuery + f"{key} {value}" + ",\n"
+                                    if self.tb.priKey == key:
                                         checkKey = True
 
                                 if self.tb.priKey != '':
@@ -153,10 +153,10 @@ tb - Identifica le tabelle in cui verryear inseriti i dati
                                         sendQuery = sendQuery + f"ENGINE = {self.tb.engine};"
                                         check = True
                                     else:
-                                        print(f"Errore nell'esecuzione della Query {self.instr.upper()}: La chiave non corrisponde a nessun VALUE")
+                                        print(f"Error executing query {self.instr.upper()}: Key does not match any value")
                                         return False
                                 else:
-                                    print(f"Errore nell'esecuzione della Query {self.instr.upper()}: Specificare la chiave primaria della tabella")
+                                    print(f"Error executing query {self.instr.upper()}: Specify primary key of the table")
                                     return False
             
                 else:
@@ -166,37 +166,37 @@ tb - Identifica le tabelle in cui verryear inseriti i dati
                             check = True
                             self.connDb = False
                         else:
-                            sendQuery = f"DROP TABLE {self.tb.nome};"
+                            sendQuery = f"DROP TABLE {self.tb.name};"
                             check = True
 
                     else:
-                        tbNomi = ''
+                        tbNames = ''
 
                         if type(self.tb) == tuple or type(self.tb) == list:
-                            for tabella in self.tb:
-                                if type(tabella) == myDatabaseTable:
-                                    if tbNomi == '':
-                                        tbNomi = tabella.nome
+                            for table in self.tb:
+                                if type(table) == myDatabaseTable:
+                                    if tbNames == '':
+                                        tbNames = table.name
                                     else:
-                                        tbNomi += ', ' + tabella.nome
-                                elif type(tabella) == str:
-                                    if tbNomi == '':
-                                        tbNomi = tabella
+                                        tbNames += ', ' + table.name
+                                elif type(table) == str:
+                                    if tbNames == '':
+                                        tbNames = table
                                     else:
-                                        tbNomi += ', ' + tabella
+                                        tbNames += ', ' + table
                         elif type(self.tb) == myDatabaseTable:
-                            tbNomi = self.tb.nome
+                            tbNames = self.tb.name
                         else:
-                            tbNomi = self.tb
+                            tbNames = self.tb
 
                         if type(self.col) == tuple or type(self.col) == list:
                             self.col = ", ".join(self.col)
                         if not type(self.col) == str:
-                            print('Errore nel passaggio delle colonne')
+                            print('Error columns format')
                             return False
 
                         if self.instr.upper() == 'SELECT':
-                            sendQuery = "SELECT {} FROM {}".format(self.col,tbNomi)
+                            sendQuery = "SELECT {} FROM {}".format(self.col,tbNames)
                             if self.outfile != '':
                                 sendQuery += f" INTO OUTFILE '{self.outfile}'"
                             if self.where != '':
@@ -208,87 +208,86 @@ tb - Identifica le tabelle in cui verryear inseriti i dati
                             if val:
                                 keys = ', '.join(val.keys())
                                 vals = "', '".join(val.values())
-                                sendQuery = "INSERT INTO {} ({})\nVALUES ('{}');".format(tbNomi,keys,vals)
+                                sendQuery = "INSERT INTO {} ({})\nVALUES ('{}');".format(tbNames,keys,vals)
                                 check = True
                             else:
-                                print(f"Errore nell'esecuzione della Query {self.instr.upper()}: Values da inserire non specificati")
+                                print(f"Error executing query {self.instr.upper()}: Values da inserire non specificati")
                                 return False
 
                         elif self.instr.upper() == 'DELETE':
-                            sendQuery = f"DELETE FROM {tbNomi}"
+                            sendQuery = f"DELETE FROM {tbNames}"
                             if self.where != '':
                                 sendQuery = sendQuery + f"\nWHERE {self.where}"
                             sendQuery = sendQuery + ';'
                             check = True
             else:
-                print(f"Errore nell'esecuzione della Query {self.instr.upper()}: E' necessario specificare un database")
+                print(f"Error executing query {self.instr.upper()}: database required")
                 return False
                 
             if check:
                 return sendQuery
             else:
-                print(f"Query {sendQuery} non eseguita")
+                print(f"Query {sendQuery} not executed")
                 return False
 
-    #Metodo che riformatta la tabella delle stringhe risultanti dalla query in maniera da stamparla a video in maniera pi� chiara
-    def __FormattaTabella(self, header, tb):
+    #   Method to reformat query's result string to print it clearely
+    def __FormatTable(self, header, tb):
 
-        lunghezze = []
-        tabella = []
+        lengths = []
+        table = []
         if type(header) == tuple:
-            newcol = []
+            newCol = []
             for el in header:
-                newcol.append(el)
-            header = newcol
+                newCol.append(el)
+            header = newCol
         elif type(header) == str:
             header = header.split(',')
 
-        tabella.append(header)
-        ncol = 0
+        table.append(header)
+        nCol = 0
         for el in header:
-            lunghezze.append(len(el))
-            ncol += 1
+            lengths.append(len(el))
+            nCol += 1
         
         for row in tb:
             c = 0
-            while c < ncol:
-                if len(row[c]) > lunghezze[c]:
-                    lunghezze[c] = len(row[c])
+            while c < nCol:
+                if len(row[c]) > lengths[c]:
+                    lengths[c] = len(row[c])
                 c += 1
-            tabella.append(row)
+            table.append(row)
 
         formatHeader = '+'
 
         c = 0
         for el in header:
             i = 0
-            while i <= lunghezze[c]:
+            while i <= lengths[c]:
                 formatHeader += "-"
                 i += 1
             formatHeader += "-+"
             c += 1
 
-        outTabella = []
-        outTabella.append(formatHeader)
+        outTable = []
+        outTable.append(formatHeader)
 
         r=0
-        for row in tabella:
+        for row in table:
             c = 0
             for el in row:
-                while len(tabella[r][c]) < lunghezze[c]:
-                    tabella[r][c] += ' '
+                while len(table[r][c]) < lengths[c]:
+                    table[r][c] += ' '
                 c += 1
             r += 1
             row = '| ' + ' | '.join(row) + ' |'
-            outTabella.append(row)
+            outTable.append(row)
             if r == 1:
-                outTabella.append(formatHeader)
+                outTable.append(formatHeader)
         
-        outTabella.append(formatHeader)
-        return outTabella
+        outTable.append(formatHeader)
+        return outTable
 
-    #Metodo da richiamare per far eseguire la query.
-    #Dettagli inseriti all'interno del metodo Info.
+    #   Method to call to execute query
     def QueryExecute(self, instr, where='', db='', tb='*', col='*', doubleCheck=True, pers=False, outfile='', **val):
                         
         output = []
@@ -308,45 +307,45 @@ tb - Identifica le tabelle in cui verryear inseriti i dati
                 else:
                     dbms = mariadb.connect(host=self.__host,port=int(self.__port),user=self.__user,password=self.__psw)
             except mariadb.Error as e:
-                print(f"Errore nella connessione a MariaDB: '{e}'")
+                print(f"Error connecting to MariaDB: '{e}'")
             else:
                 try:
-                    cursore = dbms.cursor()
-                    cursore.execute(qy)
+                    cursor = dbms.cursor()
+                    cursor.execute(qy)
                     dbms.commit()
                     try:
-                        for row in cursore:
+                        for row in cursor:
                             extract = []
                             for el in row:
                                 extract.append(str(el))
                             output.append(extract)
 
-                        print("Dati acquisiti...")
-                        print("...Formatto la visualizzazione...")
+                        print("Data acquired...")
+                        print("...Formatting visualization...")
                         
                         if col == '*':
                             if type(self.tb) == tuple or type(self.tb) == list:
-                                for tabella in self.tb:
-                                    if type(tabella) == myDatabaseTable:
-                                        tbNomi += "', '" + tabella.nome
-                                    elif type(tabella) == str:
-                                        tbNomi += "', '" + tabella
+                                for table in self.tb:
+                                    if type(table) == myDatabaseTable:
+                                        tbNames += "', '" + table.name
+                                    elif type(table) == str:
+                                        tbNames += "', '" + table
                             elif type(self.tb) == myDatabaseTable:
-                                tbNomi = self.tb.nome
+                                tbNames = self.tb.name
                             else:
-                                tbNomi = self.tb
-                            qy = f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{tbNomi}'"
-                            cursore.execute(qy)
+                                tbNames = self.tb
+                            qy = f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{tbNames}'"
+                            cursor.execute(qy)
                             dbms.commit()
                             col=[]
-                            for row in cursore:
+                            for row in cursor:
                                 col.append(row[0])
 
-                        #   Con questa funzione si formatta la tabella per stamparla a video
-                        #   Se si vuole il risultato invece di stamparlo, bisogna prendere la variabile output
-                        tabellaFormattata = self.__FormattaTabella(col,output)
+                        #   Method to format table to print it
+                        #   To get result instead of print it, take output variable
+                        formattedTable = self.__FormatTable(col,output)
 
-                        for row in tabellaFormattata:
+                        for row in formattedTable:
                             print(row)
 
                     except:
@@ -354,12 +353,11 @@ tb - Identifica le tabelle in cui verryear inseriti i dati
                             if not output == []:
                                 print(output)
                             else:
-                                #print("Query Eseguita. 0 righe da visualizzare.")
                                 pass
-                        except:
-                            pass
+                        except Exception as e:
+                            print(f"Output error: {e}")
                 except mariadb.Error as e:
-                    print(f"Errore nell'esecuzione della Query: {e}\n{qy}")
+                    print(f"Error executing query: {e}\n{qy}")
                 finally:
                     dbms.close()
 
